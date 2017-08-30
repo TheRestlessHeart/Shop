@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,5 +20,8 @@ public interface OrdersDao extends JpaRepository<Orders, String> {
 
     @Query("from Orders where good_id = :goodId")
     List<Orders> findByGoodId(@Param("goodId") String goodId);
+
+    @Query("from Orders where customer_id = :customer_id")
+    List<Orders> findByCustomerId(@Param("customer_id") String customer_id);
 }
 

@@ -42,6 +42,9 @@ public class Customer {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "token")
+    private String token;
+
     public String getCustomer_id() {
         return customer_id;
     }
@@ -112,5 +115,13 @@ public class Customer {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
