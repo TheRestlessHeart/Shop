@@ -35,6 +35,10 @@ public class Orders {
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
+    @OneToOne
+    @JoinColumn(name = "express_id")
+    private Express express;
+
     @Column(name = "order_date")
     private Date order_date;
 
@@ -43,12 +47,6 @@ public class Orders {
 
     @Column(name = "payment")
     private String payment;
-
-    @Column(name = "send_type")
-    private String send_type;
-
-    @Column(name = "send_price")
-    private String send_price;
 
     @Column(name = "order_state")
     private String order_state;
@@ -81,20 +79,12 @@ public class Orders {
         this.payment = payment;
     }
 
-    public String getSend_type() {
-        return send_type;
+    public Express getExpress() {
+        return express;
     }
 
-    public void setSend_type(String send_type) {
-        this.send_type = send_type;
-    }
-
-    public String getSend_price() {
-        return send_price;
-    }
-
-    public void setSend_price(String send_price) {
-        this.send_price = send_price;
+    public void setExpress(Express express) {
+        this.express = express;
     }
 
     public String getOrder_state() {

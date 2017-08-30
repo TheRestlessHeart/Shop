@@ -91,7 +91,7 @@ public class CustomerController extends BaseController {
     /*
      *
      */
-    @RequestMapping("/logout")
+    @PostMapping("/logout")
     public JSONObject logout(@CookieValue(value = "token",defaultValue = "null") String cookieToken,
                               @RequestBody JSONObject jsonObject){
         JSONObject jo = new JSONObject();
