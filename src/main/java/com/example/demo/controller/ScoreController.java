@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dao.CommentDao;
 import com.example.demo.dao.CustomerDao;
@@ -11,15 +10,16 @@ import com.example.demo.entity.Customer;
 import com.example.demo.entity.Good;
 import com.example.demo.entity.Orders;
 import com.example.demo.util.MjStringUtil;
-import com.example.demo.util.RespMsgUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by yancychan on 17-8-27.
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/score")
 public class ScoreController extends BaseController {
@@ -60,8 +60,9 @@ public class ScoreController extends BaseController {
                     jo.put("err", "订单不存在");
                 } else if (MjStringUtil.isEmpty(score)) {
                     jo.put("status", 1);
-                    jo.put("err", "评分为空");
-                } else {
+                    jo.put("err", "评分不能为空");
+                } else if (score.equals("1") || score.equals("2") || score.equals("3")
+                        || score.equals("4") || score.equals("5")) {
                     Orders order = ordersDao.findById(orderId);
                     Good good = order.getGood();
                     String goodId = good.getGood_id();
@@ -83,6 +84,9 @@ public class ScoreController extends BaseController {
                     System.out.println(avarage);
                     jo.put("status", 0);
                     jo.put("score", avarage);
+                } else {
+                    jo.put("status", 1);
+                    jo.put("err", "评分错误");
                 }
             }
         }
@@ -97,6 +101,7 @@ public class ScoreController extends BaseController {
         JSONObject jo = new JSONObject();
 
         String orderId = jsonObject.getString("order_id");
+//        String token = jsonObject.getString("token");
 
         if (MjStringUtil.isEmpty(token)) {
             jo.put("status", 1);
@@ -109,22 +114,28 @@ public class ScoreController extends BaseController {
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
-                    jo.put("err", "商品号为空");
-                } else if (goodDao.findById(orderId) == null) {
+                    jo.put("err", "订单号为空");
+                } else if (ordersDao.findById(orderId) == null) {
+                    jo.put("status", 1);
+                    jo.put("err", "订单号不存在");
+                } else if (ordersDao.findById(orderId).getGood() == null){
                     jo.put("status", 1);
                     jo.put("err", "商品不存在或已下架");
                 } else {
                     Orders thisOrder = ordersDao.findById(orderId);
                     Good good = thisOrder.getGood();
-                    List<Orders> orders;
+                    List<Orders> orders = new ArrayList<>();
                     int avarage = 0;
-                    Comment comment;
+                    Comment comment = new Comment();
                     orders = ordersDao.findByGoodId(good.getGood_id());
                     for (int i = 0; i < orders.size(); i++) {
                         Orders order = ordersDao.findById(orders.get(i).getOrder_id());
                         comment = order.getComment();
-                        int score1 = Integer.parseInt(comment.getComment_score());
-                        avarage += score1;
+                        System.out.println(comment);
+                        if (!comment.getComment_score().equals(null)) {
+                            int score1 = Integer.parseInt(comment.getComment_score());
+                            avarage += score1;
+                        }
                     }
                     avarage /= orders.size();
                     System.out.println(avarage);

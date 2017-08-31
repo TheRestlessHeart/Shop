@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Created by yancychan on 17-8-26.
  */
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/comment")
 public class CommentController extends BaseController {
@@ -73,6 +73,7 @@ public class CommentController extends BaseController {
                     comment.setComment_content(commentContent);
                     commentDao.save(comment);
                     jo.put("status", 0);
+
                 }
             }
         }
@@ -100,9 +101,12 @@ public class CommentController extends BaseController {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
                     jo.put("err", "订单号为空");
-                } else if (goodDao.findById(orderId) == null) {
+                } else if (ordersDao.findById(orderId) == null) {
                     jo.put("status", 1);
                     jo.put("err", "订单不存在");
+                }else if(ordersDao.findById(orderId).getGood() == null){
+                    jo.put("status", 1);
+                    jo.put("err", "商品不存在或已下架");
                 } else {
                     Orders thisOrder = ordersDao.findById(orderId);
                     Good good = thisOrder.getGood();
