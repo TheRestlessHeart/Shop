@@ -50,7 +50,7 @@ public class ScoreController extends BaseController {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
                 jo.put("status", 1);
-                jo.put("err", "登录异常");
+                jo.put("err", "登录状态异常, 请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
@@ -110,7 +110,7 @@ public class ScoreController extends BaseController {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
                 jo.put("status", 1);
-                jo.put("err", "登录异常");
+                jo.put("err", "登录状态异常, 请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);

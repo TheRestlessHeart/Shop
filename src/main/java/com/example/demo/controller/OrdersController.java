@@ -46,7 +46,7 @@ public class OrdersController extends BaseController {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
                 jo.put("status", 1);
-                jo.put("err", "登录异常");
+                jo.put("err", "登录状态异常, 请重新登录");
             } else {
                 JSONArray ordersArray = new JSONArray();
                 String customer_id = customer.getCustomer_id();
@@ -112,7 +112,7 @@ public class OrdersController extends BaseController {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
                 jo.put("status", 1);
-                jo.put("err", "登录异常");
+                jo.put("err", "登录状态异常, 请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(good_id) || good == null){
                     jo.put("status", 1);
@@ -164,4 +164,11 @@ public class OrdersController extends BaseController {
         }
         return jo;
     }
+
+//    public JSONObject payOrder(@RequestBody JSONObject jsonObject,
+//                               @CookieValue(value = "token", defaultValue = "null")
+//                                       String token){
+//        JSONObject jo = new JSONObject();
+//        return jo;
+//    }
 }
