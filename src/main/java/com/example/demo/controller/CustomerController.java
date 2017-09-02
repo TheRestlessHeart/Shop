@@ -222,7 +222,6 @@ public class CustomerController extends BaseController {
                 jo.put("phone",customer.getPhone());
             }
         }
-
         return jo;
     }
 }

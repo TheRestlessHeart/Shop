@@ -34,8 +34,10 @@ public class OrdersController extends BaseController {
 
     @PostMapping("/paid")
     public JSONObject paidOrders(@CookieValue(value = "token", defaultValue = "null")
-                                             String token) {
+                                             String token,
+                                 @RequestBody JSONObject jsonObject) {
 
+//        String token = jsonObject.getString("token");
         System.out.println(token);
         JSONObject jo = new JSONObject();
 
@@ -96,7 +98,7 @@ public class OrdersController extends BaseController {
                                             String token){
 
         JSONObject jo = new JSONObject();
-
+//        String token = jsonObject.getString("token");
         System.out.println(token);
 
         String counts = jsonObject.getString("good_count");
@@ -131,9 +133,12 @@ public class OrdersController extends BaseController {
                     int count = Integer.parseInt(counts);
                     String good_count = good.getGood_count();
                     int current_count = Integer.parseInt(good_count);
-                    if (good_count.equals(0)){
+                    if (current_count <= 0){
                         jo.put("status", 1);
                         jo.put("err", "商品已售光");
+                    }else if(current_count < count || count <= 0){
+                        jo.put("status", 1);
+                        jo.put("err", "输入的商品数有误");
                     }else {
                         Date date = new Date();
                         Express express = expressDao.findById(send_id);
@@ -151,10 +156,12 @@ public class OrdersController extends BaseController {
                         order.setMerchant(merchant);
                         order.setExpress(express);
                         order.setOrder_price(Float.toString(price));
-                        order.setOrder_state("0");
+                        order.setOrder_state("1");
                         ordersDao.save(order);
                         int restCount = current_count - count;
+                        System.out.println(current_count+"  "+count+"  "+restCount);
                         good.setGood_count(Integer.toString(restCount));
+                        goodDao.save(good);
 
                         jo.put("status", 0);
                         jo.put("order", order);
