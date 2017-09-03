@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,13 +41,13 @@ public class OrdersController extends BaseController {
         JSONObject jo = new JSONObject();
 
         if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         } else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             } else {
                 JSONArray ordersArray = new JSONArray();
                 String customer_id = customer.getCustomer_id();
@@ -87,86 +86,6 @@ public class OrdersController extends BaseController {
                 }
                 jo.put("status", 0);
                 jo.put("orderList", ordersArray);
-            }
-        }
-        return jo;
-    }
-
-    @PostMapping("/generate")
-    public JSONObject generateOrder(@RequestBody JSONObject jsonObject,
-                                    @CookieValue(value = "token", defaultValue = "null")
-                                            String token){
-
-        JSONObject jo = new JSONObject();
-//        String token = jsonObject.getString("token");
-        System.out.println(token);
-
-        String counts = jsonObject.getString("good_count");
-        String send_id = jsonObject.getString("send_id");
-        String merchant_id = jsonObject.getString("merchant_id");
-        String good_id = jsonObject.getString("good_id");
-        Good good = goodDao.findById(good_id);
-        Merchant merchant = merchantDao.findById(merchant_id);
-        if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
-        } else {
-            Customer customer = customerDao.findByToken(token);
-            if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
-            } else {
-                if (MjStringUtil.isEmpty(good_id) || good == null){
-                    jo.put("status", 1);
-                    jo.put("err", "商品不存在");
-                }else if (MjStringUtil.isEmpty(merchant_id) || merchant == null){
-                    jo.put("status", 1);
-                    jo.put("err", "商店不存在");
-                }else if(MjStringUtil.isEmpty(counts) || Integer.parseInt(counts) <= 0){
-                    jo.put("status", 1);
-                    jo.put("err", "请您选择购买数量");
-                }else if (MjStringUtil.isEmpty(send_id)){
-                    jo.put("status", 1);
-                    jo.put("err", "请您选择运输方式");
-                }
-                else {
-                    int count = Integer.parseInt(counts);
-                    String good_count = good.getGood_count();
-                    int current_count = Integer.parseInt(good_count);
-                    if (current_count <= 0){
-                        jo.put("status", 1);
-                        jo.put("err", "商品已售光");
-                    }else if(current_count < count || count <= 0){
-                        jo.put("status", 1);
-                        jo.put("err", "输入的商品数有误");
-                    }else {
-                        Date date = new Date();
-                        Express express = expressDao.findById(send_id);
-                        float price;
-                        if (Float.parseFloat(good.getGood_price()) * count < 100){
-                            price = Float.parseFloat(good.getGood_price()) * count +
-                                    Float.parseFloat(express.getExpress_price());
-                        }else {
-                            price = Float.parseFloat(good.getGood_price()) * count;
-                        }
-                        Orders order = new Orders();
-                        order.setOrder_date(date);
-                        order.setCustomer(customer);
-                        order.setGood(good);
-                        order.setMerchant(merchant);
-                        order.setExpress(express);
-                        order.setOrder_price(Float.toString(price));
-                        order.setOrder_state("1");
-                        ordersDao.save(order);
-                        int restCount = current_count - count;
-                        System.out.println(current_count+"  "+count+"  "+restCount);
-                        good.setGood_count(Integer.toString(restCount));
-                        goodDao.save(good);
-
-                        jo.put("status", 0);
-                        jo.put("order", order);
-                    }
-                }
             }
         }
         return jo;

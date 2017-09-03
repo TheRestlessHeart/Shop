@@ -44,13 +44,13 @@ public class ScoreController extends BaseController {
         String score = jsonObject.getString("score");
 
         if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         } else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
@@ -65,25 +65,19 @@ public class ScoreController extends BaseController {
                         || score.equals("4") || score.equals("5")) {
                     Orders order = ordersDao.findById(orderId);
                     Good good = order.getGood();
+                    int originalScore = good.getGood_score();
                     String goodId = good.getGood_id();
                     Comment comment = order.getComment();
                     comment.setComment_score(score);
                     commentDao.save(comment);
                     List<Orders> orders;
-                    int avarage = 0;
                     orders = ordersDao.findByGoodId(goodId);
-                    System.out.println(orders.size());
-                    for (int i = 0; i < orders.size(); i++) {
-                        Orders order1 = ordersDao.findById(orders.get(i).getOrder_id());
-                        comment = order1.getComment();
-                        int score1 = Integer.parseInt(comment.getComment_score());
-                        avarage += score1;
-                        System.out.println(avarage);
-                    }
-                    avarage /= orders.size();
-                    System.out.println(avarage);
+                    int currentScore = (originalScore * (orders.size()-1) + Integer.parseInt(score))/orders.size();
+                    System.out.println(currentScore);
+                    good.setGood_score(currentScore);
+                    goodDao.save(good);
                     jo.put("status", 0);
-                    jo.put("score", avarage);
+                    jo.put("score", currentScore);
                 } else {
                     jo.put("status", 1);
                     jo.put("err", "评分错误");
@@ -104,13 +98,13 @@ public class ScoreController extends BaseController {
 //        String token = jsonObject.getString("token");
 
         if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         } else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
@@ -124,23 +118,11 @@ public class ScoreController extends BaseController {
                 } else {
                     Orders thisOrder = ordersDao.findById(orderId);
                     Good good = thisOrder.getGood();
-                    List<Orders> orders = new ArrayList<>();
-                    int avarage = 0;
-                    Comment comment = new Comment();
-                    orders = ordersDao.findByGoodId(good.getGood_id());
-                    for (int i = 0; i < orders.size(); i++) {
-                        Orders order = ordersDao.findById(orders.get(i).getOrder_id());
-                        comment = order.getComment();
-                        System.out.println(comment);
-                        if (!comment.getComment_score().equals(null)) {
-                            int score1 = Integer.parseInt(comment.getComment_score());
-                            avarage += score1;
-                        }
-                    }
-                    avarage /= orders.size();
-                    System.out.println(avarage);
+                    List<Orders> orders = ordersDao.findByGoodId(good.getGood_id());
+                    int score = good.getGood_score();
                     jo.put("status", 0);
-                    jo.put("score", avarage);
+                    jo.put("score", score);
+                    jo.put("count", orders.size());
                 }
             }
         }

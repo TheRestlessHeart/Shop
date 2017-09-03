@@ -96,13 +96,13 @@ public class CustomerController extends BaseController {
 
 //        String token = jsonObject.getString("token");
         if (MjStringUtil.isEmpty(token)){
-            jo.put("status", 1);
-            jo.put("err","您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         }else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null){
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             }else {
                 customer.setToken(null);
                 customerDao.save(customer);
@@ -125,13 +125,13 @@ public class CustomerController extends BaseController {
         String address = jsonObject.getString("address");
 
         if (MjStringUtil.isEmpty(token)){
-            jo.put("status", 1);
-            jo.put("err","您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         }else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null){
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             }else {
                 if (MjStringUtil.isEmpty(email)){
                     jo.put("status", 1);
@@ -171,13 +171,13 @@ public class CustomerController extends BaseController {
         String confirm_new_password = jsonObject.getString("confirm_password");
 
         if (MjStringUtil.isEmpty(token)){
-            jo.put("status", 1);
-            jo.put("err","您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         }else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null){
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             }else {
                 if (!customer.getCustomer_password().equals(password)){
                     jo.put("status", 1);
@@ -199,20 +199,20 @@ public class CustomerController extends BaseController {
         return jo;
     }
 
-    @PostMapping("/message")
+    @PostMapping("/info")
     public JSONObject getCustomerMessage(@CookieValue(value = "token",defaultValue = "null") String token,
                                          @RequestBody JSONObject jsonObject){
         JSONObject jo = new JSONObject();
 //        String token = jsonObject.getString("token");
 
         if (MjStringUtil.isEmpty(token)){
-            jo.put("status", 1);
-            jo.put("err","您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         }else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null){
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             }else {
                 jo.put("status", 0);
                 jo.put("customer_id",customer.getCustomer_id());

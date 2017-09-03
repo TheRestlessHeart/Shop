@@ -50,13 +50,13 @@ public class CommentController extends BaseController {
         System.out.println(commentContent);
 
         if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         } else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);
@@ -72,6 +72,8 @@ public class CommentController extends BaseController {
                     Comment comment = order.getComment();
                     comment.setComment_content(commentContent);
                     commentDao.save(comment);
+                    order.setComment(comment);
+                    ordersDao.save(order);
                     jo.put("status", 0);
 
                 }
@@ -90,13 +92,13 @@ public class CommentController extends BaseController {
         String orderId = jsonObject.getString("order_id");
 
         if (MjStringUtil.isEmpty(token)) {
-            jo.put("status", 1);
-            jo.put("err", "您尚未登录");
+            jo.put("status", 2);
+            jo.put("err", "请重新登录");
         } else {
             Customer customer = customerDao.findByToken(token);
             if (customer == null) {
-                jo.put("status", 1);
-                jo.put("err", "登录状态异常, 请重新登录");
+                jo.put("status", 2);
+                jo.put("err", "请重新登录");
             } else {
                 if (MjStringUtil.isEmpty(orderId)) {
                     jo.put("status", 1);

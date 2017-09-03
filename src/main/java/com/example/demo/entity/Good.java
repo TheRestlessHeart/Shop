@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Value;
 
 
 import javax.persistence.*;
@@ -39,6 +40,9 @@ public class Good {
 
     @Column(name = "good_sales")
     private String good_sales;
+
+    @Column(name = "good_score")
+    private int good_score = 0;
 
     public String getGood_id() {
         return good_id;
@@ -102,5 +106,13 @@ public class Good {
 
     public void setGood_sales(String good_sales) {
         this.good_sales = good_sales;
+    }
+
+    public int getGood_score() {
+        return good_score;
+    }
+
+    public void setGood_score(int good_score) {
+        this.good_score = good_score;
     }
 }
