@@ -215,11 +215,12 @@ public class CustomerController extends BaseController {
                 jo.put("err", "请重新登录");
             }else {
                 jo.put("status", 0);
-                jo.put("customer_id",customer.getCustomer_id());
-                jo.put("customer_name",customer.getCustomer_name());
-                jo.put("address",customer.getAddress());
-                jo.put("email",customer.getEmail());
-                jo.put("phone",customer.getPhone());
+                jo.put("customer_id", customer.getCustomer_id());
+                jo.put("customer_name", customer.getCustomer_name());
+                jo.put("address", customer.getAddress());
+                jo.put("email", customer.getEmail());
+                jo.put("phone", customer.getPhone());
+                jo.put("money", customer.getMoney());
             }
         }
         return jo;

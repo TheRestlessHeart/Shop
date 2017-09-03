@@ -13,7 +13,6 @@ import com.example.demo.util.MjStringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,14 +64,14 @@ public class ScoreController extends BaseController {
                         || score.equals("4") || score.equals("5")) {
                     Orders order = ordersDao.findById(orderId);
                     Good good = order.getGood();
-                    int originalScore = good.getGood_score();
+                    double originalScore = good.getGood_score();
                     String goodId = good.getGood_id();
                     Comment comment = order.getComment();
                     comment.setComment_score(score);
                     commentDao.save(comment);
                     List<Orders> orders;
                     orders = ordersDao.findByGoodId(goodId);
-                    int currentScore = (originalScore * (orders.size()-1) + Integer.parseInt(score))/orders.size();
+                    double currentScore = (originalScore * (orders.size()-1) + Integer.parseInt(score))/orders.size();
                     System.out.println(currentScore);
                     good.setGood_score(currentScore);
                     goodDao.save(good);
@@ -119,7 +118,7 @@ public class ScoreController extends BaseController {
                     Orders thisOrder = ordersDao.findById(orderId);
                     Good good = thisOrder.getGood();
                     List<Orders> orders = ordersDao.findByGoodId(good.getGood_id());
-                    int score = good.getGood_score();
+                    double score = good.getGood_score();
                     jo.put("status", 0);
                     jo.put("score", score);
                     jo.put("count", orders.size());

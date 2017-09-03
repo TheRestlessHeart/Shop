@@ -7,7 +7,8 @@ package com.example.demo.util;
 //用来判断书本类别是否存在
 public class Type {
 
-    static String[] allType = {"Java", "Python", "算法", "人工智能", "JavaScript"};
+    static String[] allType = {"Java", "Python", "算法", "人工智能", "JavaScript","大数据",
+            "数据库","健康", "玩具", "儿童读物", "都市情感", "智慧人生"};
 
     public static boolean isInclude(String type){
         Boolean flag = false;

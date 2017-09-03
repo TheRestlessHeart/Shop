@@ -38,6 +38,7 @@ public class GoodController extends BaseController {
 
         JSONArray goodArray = new JSONArray();
         List<Good> goodList = goodDao.findAll();
+        System.out.println(goodList.size());
         for (int i = 0; i < goodList.size(); i++) {
             goodArray.add(goodList.get(i));
         }
@@ -50,7 +51,7 @@ public class GoodController extends BaseController {
     @PostMapping("/type")
     public JSONObject findByType(@RequestBody JSONObject jsonObject){
 
-        JSONObject jo = null;
+        JSONObject jo = new JSONObject();
         String type = jsonObject.getString("type");
         List<Good> goodList = new ArrayList<>();
 

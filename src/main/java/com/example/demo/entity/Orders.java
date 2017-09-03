@@ -43,7 +43,7 @@ public class Orders {
     private Date order_date;
 
     @Column(name = "order_price")
-    private String order_price;
+    private Double order_price;
 
     @Column(name = "payment")
     private String payment;
@@ -63,11 +63,11 @@ public class Orders {
         this.order_date = order_date;
     }
 
-    public String getOrder_price() {
+    public Double getOrder_price() {
         return order_price;
     }
 
-    public void setOrder_price(String order_price) {
+    public void setOrder_price(Double order_price) {
         this.order_price = order_price;
     }
 

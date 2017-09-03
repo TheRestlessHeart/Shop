@@ -45,6 +45,9 @@ public class Customer {
     @Column(name = "token")
     private String token;
 
+    @Column(name = "customer_money")
+    private double money;
+
     public String getCustomer_id() {
         return customer_id;
     }
@@ -123,5 +126,13 @@ public class Customer {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
     }
 }

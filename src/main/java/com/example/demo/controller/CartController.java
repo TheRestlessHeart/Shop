@@ -80,12 +80,12 @@ public class CartController extends BaseController {
                     } else {
                         Date date = new Date();
                         Express express = expressDao.findById(send_id);
-                        float price;
+                        Double price;
                         if (Float.parseFloat(good.getGood_price()) * count < 100) {
-                            price = Float.parseFloat(good.getGood_price()) * count +
-                                    Float.parseFloat(express.getExpress_price());
+                            price = Double.parseDouble(good.getGood_price()) * count +
+                                    Double.parseDouble(express.getExpress_price());
                         } else {
-                            price = Float.parseFloat(good.getGood_price()) * count;
+                            price = Double.parseDouble(good.getGood_price()) * count;
                         }
                         Orders order = new Orders();
                         order.setOrder_date(date);
@@ -93,7 +93,7 @@ public class CartController extends BaseController {
                         order.setGood(good);
                         order.setMerchant(merchant);
                         order.setExpress(express);
-                        order.setOrder_price(Float.toString(price));
+                        order.setOrder_price(price);
                         order.setOrder_state("0");
                         ordersDao.save(order);
                         int restCount = current_count - count;
@@ -139,7 +139,7 @@ public class CartController extends BaseController {
                         Express express = order.getExpress();
                         Merchant merchant = order.getMerchant();
                         String order_id = order.getOrder_id();
-                        String order_price = order.getOrder_price();
+                        Double order_price = order.getOrder_price();
                         String send_type = express.getExpress_type();
                         String send_price = express.getExpress_price();
                         String merchant_name = merchant.getMerchant_name();
@@ -224,9 +224,17 @@ public class CartController extends BaseController {
                     jo.put("err", "订单不存在");
                 } else {
                     order = ordersDao.findById(order_id);
+                    if (customer.getMoney() < order.getOrder_price()){
+                        jo.put("status", 1);
+                        jo.put("err", "余额不足, 请联系数据库管理员进行充值");
+                    }else {
                     order.setOrder_state("1");
+                    double restMoney = customer.getMoney() - order.getOrder_price();
+                    customer.setMoney(restMoney);
+                    customerDao.save(customer);
                     ordersDao.save(order);
                     jo.put("status", 0);
+                    }
                 }
             }
         }
