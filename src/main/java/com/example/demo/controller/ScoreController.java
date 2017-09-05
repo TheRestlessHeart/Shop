@@ -63,20 +63,40 @@ public class ScoreController extends BaseController {
                 } else if (score.equals("1") || score.equals("2") || score.equals("3")
                         || score.equals("4") || score.equals("5")) {
                     Orders order = ordersDao.findById(orderId);
-                    Good good = order.getGood();
-                    double originalScore = good.getGood_score();
-                    String goodId = good.getGood_id();
-                    Comment comment = order.getComment();
-                    comment.setComment_score(score);
-                    commentDao.save(comment);
-                    List<Orders> orders;
-                    orders = ordersDao.findByGoodId(goodId);
-                    double currentScore = (originalScore * (orders.size()-1) + Integer.parseInt(score))/orders.size();
-                    System.out.println(currentScore);
-                    good.setGood_score(currentScore);
-                    goodDao.save(good);
-                    jo.put("status", 0);
-                    jo.put("score", currentScore);
+                    try {
+                        String orders_score = order.getComment().getComment_score();
+                        System.out.println(orders_score);
+                        if (orders_score == null) {
+                            Good good = order.getGood();
+                            double originalScore = Double.parseDouble(good.getGood_score());
+                            System.out.println("该物品原来的评分是:" + originalScore);
+                            String goodId = good.getGood_id();
+                            Comment comment = order.getComment();
+                            comment.setComment_score(score);
+                            System.out.println("本次订单的评分为:" + score);
+                            commentDao.save(comment);
+                            List<Orders> orders;
+                            orders = ordersDao.findByGoodId(goodId);
+                            if (originalScore == 0){
+                                good.setGood_score(score);
+                                goodDao.save(good);
+                                System.out.println("1该物品现在的评分是:" + good.getGood_score());
+                            }else {
+                                double currentScore = (originalScore * (orders.size() - 1) + Integer.parseInt(score)) / orders.size();
+                                good.setGood_score(Double.toString(currentScore));
+                                goodDao.save(good);
+                                System.out.println("2该物品现在的评分是:" + currentScore);
+                            }
+                            System.out.println("存入到数据库的评分是" + good.getGood_score());
+                            jo.put("status", 0);
+                            jo.put("score", good.getGood_score());
+                        } else {
+                            jo.put("status", 1);
+                            jo.put("err", "您已给该订单评过分");
+                        }
+                    } catch (NullPointerException e) {
+                        System.out.println(e);
+                    }
                 } else {
                     jo.put("status", 1);
                     jo.put("err", "评分错误");
@@ -111,14 +131,15 @@ public class ScoreController extends BaseController {
                 } else if (ordersDao.findById(orderId) == null) {
                     jo.put("status", 1);
                     jo.put("err", "订单号不存在");
-                } else if (ordersDao.findById(orderId).getGood() == null){
+                } else if (ordersDao.findById(orderId).getGood() == null) {
                     jo.put("status", 1);
                     jo.put("err", "商品不存在或已下架");
                 } else {
                     Orders thisOrder = ordersDao.findById(orderId);
                     Good good = thisOrder.getGood();
                     List<Orders> orders = ordersDao.findByGoodId(good.getGood_id());
-                    double score = good.getGood_score();
+                    String score = good.getGood_score();
+                    System.out.println("从数据库中取出的评分是" + score);
                     jo.put("status", 0);
                     jo.put("score", score);
                     jo.put("count", orders.size());

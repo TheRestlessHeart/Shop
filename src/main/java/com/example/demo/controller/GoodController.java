@@ -22,15 +22,7 @@ import java.util.List;
 public class GoodController extends BaseController {
 
     @Autowired
-    CustomerDao customerDao;
-    @Autowired
-    OrdersDao ordersDao;
-    @Autowired
     GoodDao goodDao;
-    @Autowired
-    MerchantDao merchantDao;
-    @Autowired
-    ExpressDao expressDao;
 
     @PostMapping("/get")
     public JSONObject showGood() {

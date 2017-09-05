@@ -17,7 +17,9 @@ import com.example.demo.util.MjStringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -33,8 +35,6 @@ public class CommentController extends BaseController {
     CommentDao commentDao;
     @Autowired
     OrdersDao ordersDao;
-    @Autowired
-    GoodDao goodDao;
     @Autowired
     CustomerDao customerDao;
 
@@ -68,14 +68,27 @@ public class CommentController extends BaseController {
                     jo.put("status", 1);
                     jo.put("err", "评论为空");
                 } else {
-                    Orders order = ordersDao.findById(orderId);
-                    Comment comment = order.getComment();
-                    comment.setComment_content(commentContent);
-                    commentDao.save(comment);
-                    order.setComment(comment);
-                    ordersDao.save(order);
-                    jo.put("status", 0);
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date date = new Date();
+                        String dateForm = sdf.format(date);
+                        Orders order = ordersDao.findById(orderId);
+                        Comment comment = order.getComment();
+                        if (comment.getComment_content() == null) {
+                            comment.setComment_content(commentContent);
+                            comment.setComment_date(dateForm);
+                            commentDao.save(comment);
+                            order.setComment(comment);
+                            ordersDao.save(order);
+                            jo.put("status", 0);
+                        } else {
+                            jo.put("status", 1);
+                            jo.put("err", "你已评论过该订单");
+                        }
 
+                    } catch (NullPointerException e) {
+                        System.out.println(e);
+                    }
                 }
             }
         }
@@ -89,6 +102,7 @@ public class CommentController extends BaseController {
 
         JSONObject jo = new JSONObject();
 
+//        String token = jsonObject.getString("token");
         String orderId = jsonObject.getString("order_id");
 
         if (MjStringUtil.isEmpty(token)) {
@@ -106,7 +120,7 @@ public class CommentController extends BaseController {
                 } else if (ordersDao.findById(orderId) == null) {
                     jo.put("status", 1);
                     jo.put("err", "订单不存在");
-                }else if(ordersDao.findById(orderId).getGood() == null){
+                } else if (ordersDao.findById(orderId).getGood() == null) {
                     jo.put("status", 1);
                     jo.put("err", "商品不存在或已下架");
                 } else {
@@ -119,7 +133,14 @@ public class CommentController extends BaseController {
                     for (int i = 0; i < orders.size(); i++) {
                         Orders order = ordersDao.findById(orders.get(i).getOrder_id());
                         comment = order.getComment();
-                        array.add(comment);
+                        System.out.println(comment.getComment_content());
+                        try {
+                            if (!comment.getComment_content().equals(null)) {
+                                array.add(comment);
+                            }
+                        } catch (NullPointerException e) {
+                            System.out.println(e);
+                        }
                     }
                     jo.put("status", 0);
                     jo.put("comment", array);

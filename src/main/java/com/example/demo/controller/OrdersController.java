@@ -24,19 +24,13 @@ public class OrdersController extends BaseController {
     CustomerDao customerDao;
     @Autowired
     OrdersDao ordersDao;
-    @Autowired
-    GoodDao goodDao;
-    @Autowired
-    MerchantDao merchantDao;
-    @Autowired
-    ExpressDao expressDao;
 
     @PostMapping("/paid")
     public JSONObject paidOrders(@CookieValue(value = "token", defaultValue = "null")
                                          String token,
                                  @RequestBody JSONObject jsonObject) {
-
 //        String token = jsonObject.getString("token");
+
         System.out.println(token);
         JSONObject jo = new JSONObject();
 
@@ -54,7 +48,7 @@ public class OrdersController extends BaseController {
                 String customer_name = customer.getCustomer_name();
                 List<Orders> ordersList = new ArrayList<>();
                 ordersList = ordersDao.findByCustomerId(customer_id);
-                double cost = 0;
+//                double cost = 0;
                 for (Orders order : ordersList) {
                     //state为"1"表示订单已支付, 为"0"表示未支付
                     if (order.getOrder_state().equals("1")) {
@@ -72,7 +66,7 @@ public class OrdersController extends BaseController {
                         String merchant_name = merchant.getMerchant_name();
                         String good_name = good.getGood_name();
                         String order_date = sdf.format(order.getOrder_date());
-                        cost += order_price;
+//                        cost += order_price;
 
                         obj.put("customer_name", customer_name);
                         obj.put("merchant_name", merchant_name);
@@ -84,16 +78,17 @@ public class OrdersController extends BaseController {
                         obj.put("send_type", send_type);
                         ordersArray.add(obj);
                     }
-                    if (customer.getDegress() == null){
-                        customer.setDegress("1");
-                        customerDao.save(customer);
-                    }
-                    int originalDegress = Integer.parseInt(customer.getDegress());
-                    if (originalDegress < 10) {
-                        int currentDegress = (int) cost / (1000 * originalDegress);
-                        customer.setDegress(Integer.toString(currentDegress));
-                        customerDao.save(customer);
-                    }
+//                    if (customer.getDegress() == null){
+//                        customer.setDegress("1");
+//                        customerDao.save(customer);
+//                    }
+//                    System.out.println(customer.getDegress());
+//                    int originalDegress = Integer.parseInt(customer.getDegress());
+//                    if (originalDegress < 10) {
+//                        int currentDegress = (int) cost / (1000 * originalDegress);
+//                        customer.setDegress(Integer.toString(currentDegress));
+//                        customerDao.save(customer);
+//                    }
                 }
                 jo.put("status", 0);
                 jo.put("orderList", ordersArray);

@@ -31,13 +31,14 @@ public class CartController extends BaseController {
     MerchantDao merchantDao;
     @Autowired
     ExpressDao expressDao;
+    @Autowired
+    CommentDao commentDao;
 
     @PostMapping("/add")
     public JSONObject addOrder(@RequestBody JSONObject jsonObject,
                                @CookieValue(value = "token", defaultValue = "null")
                                        String token) {
         JSONObject jo = new JSONObject();
-//        String token = jsonObject.getString("token");
         System.out.println(token);
 
         String counts = jsonObject.getString("good_count");
@@ -204,6 +205,7 @@ public class CartController extends BaseController {
                                @CookieValue(value = "token", defaultValue = "null")
                                        String token) {
         JSONObject jo = new JSONObject();
+//        String token = jsonObject.getString("token");
         String order_id = jsonObject.getString("order_id");
 
         if (MjStringUtil.isEmpty(token)) {
@@ -224,16 +226,19 @@ public class CartController extends BaseController {
                     jo.put("err", "订单不存在");
                 } else {
                     order = ordersDao.findById(order_id);
-                    if (customer.getMoney() < order.getOrder_price()){
+                    if (customer.getMoney() < order.getOrder_price()) {
                         jo.put("status", 1);
                         jo.put("err", "余额不足, 请联系数据库管理员进行充值");
-                    }else {
-                    order.setOrder_state("1");
-                    double restMoney = customer.getMoney() - order.getOrder_price();
-                    customer.setMoney(restMoney);
-                    customerDao.save(customer);
-                    ordersDao.save(order);
-                    jo.put("status", 0);
+                    } else {
+                        order.setOrder_state("1");
+                        double restMoney = customer.getMoney() - order.getOrder_price();
+                        Comment comment = new Comment();
+                        order.setComment(comment);
+                        customer.setMoney(restMoney);
+                        commentDao.save(comment);
+                        customerDao.save(customer);
+                        ordersDao.save(order);
+                        jo.put("status", 0);
                     }
                 }
             }

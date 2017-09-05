@@ -90,8 +90,7 @@ public class CustomerController extends BaseController {
 
     //退出当前账号
     @PostMapping("/logout")
-    public JSONObject logout(@CookieValue(value = "token",defaultValue = "null") String token,
-                              @RequestBody JSONObject jsonObject){
+    public JSONObject logout(@CookieValue(value = "token",defaultValue = "null") String token){
         JSONObject jo = new JSONObject();
 
 //        String token = jsonObject.getString("token");
@@ -165,7 +164,6 @@ public class CustomerController extends BaseController {
                                     @RequestBody JSONObject jsonObject){
         JSONObject jo =new JSONObject();
 
-//        String token = jsonObject.getString("token");
         String password = jsonObject.getString("password");
         String new_password = jsonObject.getString("new_password");
         String confirm_new_password = jsonObject.getString("confirm_password");
@@ -200,10 +198,8 @@ public class CustomerController extends BaseController {
     }
 
     @PostMapping("/info")
-    public JSONObject getCustomerMessage(@CookieValue(value = "token",defaultValue = "null") String token,
-                                         @RequestBody JSONObject jsonObject){
+    public JSONObject getCustomerMessage(@CookieValue(value = "token",defaultValue = "null") String token){
         JSONObject jo = new JSONObject();
-//        String token = jsonObject.getString("token");
 
         if (MjStringUtil.isEmpty(token)){
             jo.put("status", 2);

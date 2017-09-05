@@ -42,7 +42,7 @@ public class Good {
     private String good_sales;
 
     @Column(name = "good_score")
-    private double good_score = 0;
+    private String good_score;
 
     public String getGood_id() {
         return good_id;
@@ -108,11 +108,11 @@ public class Good {
         this.good_sales = good_sales;
     }
 
-    public double getGood_score() {
+    public String getGood_score() {
         return good_score;
     }
 
-    public void setGood_score(double good_score) {
+    public void setGood_score(String good_score) {
         this.good_score = good_score;
     }
 }
